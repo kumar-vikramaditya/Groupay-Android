@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:background="#d3d3d3"
+    android:id="@+id/rel_popup" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingTop="5dip"
+        android:paddingBottom="5dip" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="150dp"
+            android:orientation="vertical"
+            android:padding="10dip" >
+
+            <TextView
+                android:id="@+id/tv_grpname"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="Group Name"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="#372c24" />
+
+            <TextView
+                android:id="@+id/tv_grpmembers"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="Members in this group are:"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="#372c24" />
+
+            <ListView
+                android:id="@+id/list_grpmembers"
+                android:layout_width="wrap_content"
+                android:layout_height="150dp" >
+            </ListView>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingTop="10dip" >
+
+            <Button
+                android:id="@+id/btnAcceptGrp"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Accept" />
+
+            <Button
+                android:id="@+id/btnIgnoreGrp"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Ignore" />
+        </LinearLayout>
+    </LinearLayout>
+
+</RelativeLayout>

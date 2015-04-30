@@ -1,0 +1,106 @@
+
+<!-- <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+   
+    <LinearLayout 
+      android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="10dip">
+    
+    <TextView
+            android:id="@+id/profileName"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dip"
+            android:textAppearance="?android:attr/textAppearanceMedium" 
+            android:textColor="#372c24" />
+        
+     <Button
+            android:id="@+id/groups"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:gravity="start"
+            android:background="#ffffff"
+            android:layout_marginTop="20dip"
+            android:text="Groups" />
+ 
+      <ListView
+              android:id="@+id/list_groups"
+              android:layout_height="100dp"
+              android:layout_width="wrap_content">
+         </ListView>
+     
+     <Button
+            android:id="@+id/logout"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:gravity="start"
+            android:background="#ffffff"
+            android:layout_marginTop="20dip"
+            android:text="Logout" />
+ 
+     <ListView
+              android:id="@+id/list_events"
+              android:layout_height="100dp"
+              android:layout_width="wrap_content">
+     </ListView>
+    </LinearLayout>
+
+</RelativeLayout>
+  -->
+  
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" 
+    >
+   
+    <LinearLayout 
+      android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="10dip">
+    
+    <TextView
+            android:id="@+id/profileName"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dip"
+            android:text="Welcome Nirali..."
+            android:textAppearance="?android:attr/textAppearanceMedium" 
+            android:textColor="#372c24" />
+        
+     <Button
+            android:id="@+id/btnGroups"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:gravity="start"
+            android:background="#ffffff"
+            android:layout_marginTop="20dip"
+            android:text="Groups" />
+ 
+      <ListView
+              android:id="@+id/list_groups"
+              android:layout_height="100dp"
+              android:layout_width="wrap_content">
+         </ListView>
+     
+     <Button
+            android:id="@+id/btnEvents"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:gravity="start"
+            android:background="#ffffff"
+            android:layout_marginTop="20dip"
+            android:text="Events" />
+ 
+     <ListView
+              android:id="@+id/list_events"
+              android:layout_height="100dp"
+              android:layout_width="wrap_content">
+         </ListView>
+    </LinearLayout>
+
+</RelativeLayout>
+  
