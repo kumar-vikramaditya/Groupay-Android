@@ -2,6 +2,8 @@ package com.vikram.groupay;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
@@ -17,11 +19,16 @@ import org.json.JSONObject;
 
 
 
+
+
+
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.Display;
 import android.view.Gravity;
@@ -40,6 +47,7 @@ import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.Toast;
 
 public class ProfileActivity extends Activity{
 	JSONObject user;
@@ -66,7 +74,10 @@ public class ProfileActivity extends Activity{
 	List<NameValuePair> params1;
 	List<NameValuePair> params;
 	int globalPosition;
-	
+	Handler handler;
+	Timer myTimer;
+	TimerTask myTimerTask;
+	boolean timerFlag=true;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -80,15 +91,28 @@ public class ProfileActivity extends Activity{
 		
 		pref = getSharedPreferences("AppPref", MODE_PRIVATE);
 		 
-		
-		groups.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent regactivity = new Intent(ProfileActivity.this,GroupsActivity.class);
-                startActivity(regactivity);
-                finish();
+		myTimer= new Timer();
+        handler = new Handler(); 
+        myTimerTask = new TimerTask() {
+            public void run() { 
+                handler.post(new Runnable() {
+                    public void run() {
+                    	if(timerFlag){
+                    		//Toast.makeText(ProfileActivity.this, "test", Toast.LENGTH_SHORT).show();
+                            refreshNotificationList();
+                    	}
+                        
+                    }
+
+                });
+
+
             }
-        });
+        };
+        
+        myTimer.schedule(myTimerTask, 10000, 10000); 
+        
+		
 		try {
 			user=new JSONObject(getIntent().getStringExtra("userdata"));
 			fisrtName.setText(user.getString("firstName").toUpperCase());
@@ -101,11 +125,23 @@ public class ProfileActivity extends Activity{
 			e.printStackTrace();
 		}
 		
+		groups.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent regactivity = new Intent(ProfileActivity.this,GroupsActivity.class);
+                regactivity.putExtra("userdata", user.toString());
+                startActivity(regactivity);
+                //finish();
+            }
+        });
+		
 	}
 	
 	private void getPopupWindow() {
 		// TODO Auto-generated method stub
 		try {
+			
+			timerFlag=false;
 			LayoutInflater inflater = (LayoutInflater) ProfileActivity.this
 					.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 			View layout = inflater.inflate(
@@ -147,17 +183,29 @@ public class ProfileActivity extends Activity{
 
 		public void onClick(View view) {
 			// TODO Auto-generated method stub
-			
-            try {
-        	ServerRequest sr = new ServerRequest();
-		 	params = new ArrayList<NameValuePair>();
-           params.add(new BasicNameValuePair("groupName", groupName[globalPosition]));
-           params.add(new BasicNameValuePair("groupAdminEmail", groupAdmin[globalPosition]));
-			params.add(new BasicNameValuePair("userEmail", user.getString("email")));
-			 params.add(new BasicNameValuePair("updateAction", "Join Group"));
+			try {
+				
+				ServerRequest sr = new ServerRequest();
+			 	params = new ArrayList<NameValuePair>();
+			 	params.add(new BasicNameValuePair("userEmail", user.getString("email")));
+	           params.add(new BasicNameValuePair("groupName", groupName[globalPosition]));
+	           params.add(new BasicNameValuePair("groupAdminEmail", groupAdmin[globalPosition]));
+	           params.add(new BasicNameValuePair("updateAction", "Join Group"));
 	           JSONObject json = sr.getJSON(AppSettings.SERVER_IP+"/updateGroup",params);
-	           
-	           
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			refreshNotificationList();
+			pwindow.dismiss();
+			timerFlag=true;
+		}
+	};
+	
+	 void refreshNotificationList(){
+		try {
+        	ServerRequest sr = new ServerRequest();
+        	
 			 	params = new ArrayList<NameValuePair>();
 				params.add(new BasicNameValuePair("userEmail", user.getString("email")));
 		         JSONObject newjson = sr.getJSON(AppSettings.SERVER_IP+"/refreshUser",params);
@@ -170,40 +218,33 @@ public class ProfileActivity extends Activity{
 				e.printStackTrace();
 			}
            
-			pwindow.dismiss();
-
-		}
-	};
-
+	}
 	
 	private OnClickListener button_ignore = new OnClickListener() {
 
 		public void onClick(View view) {
 			// TODO Auto-generated method stub
 			
-            try {
-        	ServerRequest sr = new ServerRequest();
-		 	params = new ArrayList<NameValuePair>();
-           params.add(new BasicNameValuePair("groupName", groupName[globalPosition]));
-           params.add(new BasicNameValuePair("groupAdminEmail", groupAdmin[globalPosition]));
-			params.add(new BasicNameValuePair("userEmail", user.getString("email")));
-			 params.add(new BasicNameValuePair("updateAction", "Ignore Group"));
-	           JSONObject json = sr.getJSON(AppSettings.SERVER_IP+"/updateGroup",params);
-	           
-	           
+			try {
+				
+				ServerRequest sr = new ServerRequest();
 			 	params = new ArrayList<NameValuePair>();
-				params.add(new BasicNameValuePair("userEmail", user.getString("email")));
-		         JSONObject newjson = sr.getJSON(AppSettings.SERVER_IP+"/refreshUser",params);
-		         user=newjson.getJSONObject("user");
-		         
-		         getGroupRequests();
-	           groupAdapter.notifyDataSetChanged();
+			 	params.add(new BasicNameValuePair("userEmail", user.getString("email")));
+	           params.add(new BasicNameValuePair("groupName", groupName[globalPosition]));
+	           params.add(new BasicNameValuePair("groupAdminEmail", groupAdmin[globalPosition]));
+	           params.add(new BasicNameValuePair("updateAction", "Join Group"));
+	           JSONObject json = sr.getJSON(AppSettings.SERVER_IP+"/updateGroup",params);
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+			
+	           
+	           
+			refreshNotificationList();
            
 			pwindow.dismiss();
+			timerFlag=true;
 
 		}
 	};
@@ -299,3 +340,4 @@ public class ProfileActivity extends Activity{
 	}
 
 }
+

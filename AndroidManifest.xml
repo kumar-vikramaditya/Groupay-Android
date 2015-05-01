@@ -15,7 +15,8 @@
         android:theme="@style/AppTheme" >
         <activity
             android:name=".MainActivity"
-            android:label="Login" >
+            android:label="Login"
+            android:screenOrientation="portrait" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 				<category android:name="android.intent.category.LAUNCHER" />
@@ -23,17 +24,34 @@
         </activity>
         <activity
             android:name=".RegisterActivity"
-            android:label="Signup" >
+            android:label="Signup" 
+            android:screenOrientation="portrait" >
         </activity>
         
         <activity
             android:name=".ProfileActivity"
-            android:label="Profile" >
+            android:label="Profile" 
+            android:screenOrientation="portrait" >
         </activity>
         
         <activity
             android:name=".GroupsActivity"
-            android:label="Groups" >
+            android:label="Groups" 
+            android:screenOrientation="portrait" 
+            android:parentActivityName="com.vikram.groupay.ProfileActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.vikram.groupay.ProfileActivity" />
+        </activity>
+        
+        <activity
+            android:name=".CreategroupActivity"
+            android:label="Create Group" 
+            android:screenOrientation="portrait" 
+            android:parentActivityName="com.vikram.groupay.GroupsActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.vikram.groupay.GroupsActivity" />
         </activity>
     </application>
 

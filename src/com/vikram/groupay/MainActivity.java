@@ -89,7 +89,7 @@ public class MainActivity extends Activity {
                         finish();
                     }
 
-                        Toast.makeText(getApplication(),jsonstr,Toast.LENGTH_LONG).show();
+                        //Toast.makeText(getApplication(),jsonstr,Toast.LENGTH_LONG).show();
 
                 }catch (JSONException e) {
                     e.printStackTrace();

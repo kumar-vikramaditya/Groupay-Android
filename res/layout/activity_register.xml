@@ -123,7 +123,6 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="5dip"
             android:layout_marginBottom="20dip"
-            android:password="true"
             android:singleLine="true" />
         
         <TextView
