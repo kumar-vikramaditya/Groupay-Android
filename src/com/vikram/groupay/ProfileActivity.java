@@ -188,6 +188,7 @@ public class ProfileActivity extends Activity{
 				ServerRequest sr = new ServerRequest();
 			 	params = new ArrayList<NameValuePair>();
 			 	params.add(new BasicNameValuePair("userEmail", user.getString("email")));
+			 	params.add(new BasicNameValuePair("userName", user.getString("userName")));
 	           params.add(new BasicNameValuePair("groupName", groupName[globalPosition]));
 	           params.add(new BasicNameValuePair("groupAdminEmail", groupAdmin[globalPosition]));
 	           params.add(new BasicNameValuePair("updateAction", "Join Group"));
@@ -199,6 +200,36 @@ public class ProfileActivity extends Activity{
 			refreshNotificationList();
 			pwindow.dismiss();
 			timerFlag=true;
+		}
+	};
+	
+	private OnClickListener button_ignore = new OnClickListener() {
+
+		public void onClick(View view) {
+			// TODO Auto-generated method stub
+			
+			try {
+				
+				ServerRequest sr = new ServerRequest();
+			 	params = new ArrayList<NameValuePair>();
+			 	params.add(new BasicNameValuePair("userEmail", user.getString("email")));
+			 	params.add(new BasicNameValuePair("userName", user.getString("userName")));
+	           params.add(new BasicNameValuePair("groupName", groupName[globalPosition]));
+	           params.add(new BasicNameValuePair("groupAdminEmail", groupAdmin[globalPosition]));
+	           params.add(new BasicNameValuePair("updateAction", "Delete Group"));
+	           JSONObject json = sr.getJSON(AppSettings.SERVER_IP+"/updateGroup",params);
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+	           
+	           
+			refreshNotificationList();
+           
+			pwindow.dismiss();
+			timerFlag=true;
+
 		}
 	};
 	
@@ -220,34 +251,7 @@ public class ProfileActivity extends Activity{
            
 	}
 	
-	private OnClickListener button_ignore = new OnClickListener() {
 
-		public void onClick(View view) {
-			// TODO Auto-generated method stub
-			
-			try {
-				
-				ServerRequest sr = new ServerRequest();
-			 	params = new ArrayList<NameValuePair>();
-			 	params.add(new BasicNameValuePair("userEmail", user.getString("email")));
-	           params.add(new BasicNameValuePair("groupName", groupName[globalPosition]));
-	           params.add(new BasicNameValuePair("groupAdminEmail", groupAdmin[globalPosition]));
-	           params.add(new BasicNameValuePair("updateAction", "Join Group"));
-	           JSONObject json = sr.getJSON(AppSettings.SERVER_IP+"/updateGroup",params);
-			} catch (JSONException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			
-	           
-	           
-			refreshNotificationList();
-           
-			pwindow.dismiss();
-			timerFlag=true;
-
-		}
-	};
 
 	
 	private void getGroupRequests() throws JSONException{
@@ -297,9 +301,9 @@ public class ProfileActivity extends Activity{
        params1.add(new BasicNameValuePair("groupToken", user.getJSONArray("groupRequests").getString(globalPosition)));
       JSONObject json = sr.getJSON(AppSettings.SERVER_IP+"/getGroupDetails",params1);
       if(json!=null){
-   	   groupMembers= new String[json.getJSONArray("groupMembers").length()];
-   	   for(int j=0;j<json.getJSONArray("groupMembers").length();j++){
-   		   groupMembers[j]=json.getJSONArray("groupMembers").getString(j);
+   	   groupMembers= new String[json.getJSONArray("groupMembersName").length()];
+   	   for(int j=0;j<json.getJSONArray("groupMembersName").length();j++){
+   		   groupMembers[j]=json.getJSONArray("groupMembersName").getString(j);
    	   }
       }
 	}
@@ -307,7 +311,7 @@ public class ProfileActivity extends Activity{
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
-		Log.e("GroupayMenu", "error");
+		//Log.e("GroupayMenu", "error");
 		MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.activity_main_actions, menu);
 		return super.onCreateOptionsMenu(menu);

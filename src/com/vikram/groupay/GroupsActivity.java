@@ -49,12 +49,12 @@ public class GroupsActivity extends Activity{
 	             params.add(new BasicNameValuePair("groupToken", user.getJSONArray("groups").getString(i)));
 	            JSONObject json = sr.getJSON(AppSettings.SERVER_IP+"/getGroupDetails",params);
 	            if(json != null){
-	            	groupsAdded[i]=json.getString("groupName");
-	            	groupsAdmin[i]=json.getString("groupAdmin");
+	            	groupsAdded[i]=json.getString("groupName")+"  ("+ json.getString("groupAdminName")+")";
+	            	//groupsAdmin[i]=json.getString("groupAdmin");
 	            }
 				
 			}
-			
+			//Log.e("NEWLOG",groupsAdded.toString());
 			groupAdapter= new ArrayAdapter<String>(this,
 					android.R.layout.simple_list_item_1, groupsAdded);
 			//groupAdapter.

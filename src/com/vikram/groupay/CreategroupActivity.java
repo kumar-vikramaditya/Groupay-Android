@@ -1,6 +1,13 @@
 package com.vikram.groupay;
 
 import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import android.app.Activity;
 import android.content.Context;
@@ -28,6 +35,11 @@ public class CreategroupActivity extends Activity{
 	Button btnadd,btncancel;
 	PopupWindow pwindow;
 	ArrayAdapter<String> adapter_list;
+	JSONObject user;
+	List<NameValuePair> params;
+	String[] val_list;
+	String[] val_list_email;
+	ArrayAdapter<String> adapter_selected;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -37,7 +49,13 @@ public class CreategroupActivity extends Activity{
 		getActionBar().setDisplayHomeAsUpEnabled(true);
 		
 		btnadd = (Button)findViewById(R.id.btnAddMembers);
-		
+		selected_members=(ListView) findViewById(R.id.selected_members);
+		try {
+			user=new JSONObject(getIntent().getStringExtra("userdata"));
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		/* Bundle b = getIntent().getExtras();
 	        String[] resultArr = b.getStringArray("selectedItems");
 	        selected_members = (ListView) findViewById(R.id.selected_members);
@@ -67,9 +85,20 @@ public class CreategroupActivity extends Activity{
 				View layout = inflater.inflate(R.layout.activity_memberslist,(ViewGroup) findViewById(R.id.rel_popup1));
 				listmembers = (ListView) layout.findViewById(R.id.member_list);
 				
-				String[] val_list = new String[] { "notification e 1",
-						"notification e 2", "notification e 2", "notification e 2",
-						"notification e 2" };
+				 ServerRequest sr = new ServerRequest();
+				 params = new ArrayList<NameValuePair>();
+				 params.add(new BasicNameValuePair("groupToken", ""));
+	             JSONObject json = sr.getJSON(AppSettings.SERVER_IP+"/getAllUsers",params);
+	            if(json != null){
+	            	JSONArray users= json.getJSONArray("users");
+	            	val_list= new String[users.length()];
+	            	val_list_email= new String[users.length()];
+	            	for(int i=0;i<users.length();i++){
+	            		val_list[i]=users.getJSONObject(i).getString("userName");
+	            		val_list_email[i]=users.getJSONObject(i).getString("email");
+	            	}
+	            }
+				
 				adapter_list = new ArrayAdapter<String>(CreategroupActivity.this,
 						android.R.layout.simple_list_item_multiple_choice, val_list);
 				listmembers.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
@@ -103,8 +132,12 @@ public class CreategroupActivity extends Activity{
 			private OnClickListener button_accept = new OnClickListener() {
 
 				public void onClick(View view) {
+					
+					String[] resultArr = val_list;
+			       
+					
 					// TODO Auto-generated method stub
-					/*SparseBooleanArray checked = listmembers.getCheckedItemPositions();
+					SparseBooleanArray checked = listmembers.getCheckedItemPositions();
 			        ArrayList<String> selectedItems = new ArrayList<String>();
 			        for (int i = 0; i < checked.size(); i++) {
 			            // Item position in adapter
@@ -119,8 +152,12 @@ public class CreategroupActivity extends Activity{
 			        for (int i = 0; i < selectedItems.size(); i++) {
 			            outputStrArr[i] = selectedItems.get(i);
 			        }
-			 
-			        Intent intent = new Intent(getApplicationContext(),
+			        Log.e("SelectedItem",outputStrArr.toString());
+			        
+			        adapter_selected = new ArrayAdapter<String>(CreategroupActivity.this,
+			                android.R.layout.simple_list_item_1, outputStrArr);
+			        selected_members.setAdapter(adapter_selected);
+			       /*Intent intent = new Intent(getApplicationContext(),
 			        		CreategroupActivity.class);
 			 
 			        // Create a bundle object
@@ -128,10 +165,10 @@ public class CreategroupActivity extends Activity{
 			        b.putStringArray("selectedItems", outputStrArr);
 			 
 			        // Add the bundle to the intent.
-			        intent.putExtras(b);
+			        intent.putExtras(b);*/
 			 
 			        // start the ResultActivity
-			        startActivity(intent);*/
+			       // startActivity(intent);
 					pwindow.dismiss();
 
 				}
