@@ -85,7 +85,6 @@
 
         <EditText
             android:id="@+id/firstName"
-        	android:hint="firstName"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="20dip"
@@ -101,12 +100,10 @@
 
         <EditText
              android:id="@+id/lastName"
-        	 android:hint="lastName"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dip"
             android:layout_marginBottom="20dip"
-            android:password="true"
             android:singleLine="true" />
 
 		<TextView

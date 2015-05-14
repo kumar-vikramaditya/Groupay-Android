@@ -62,13 +62,23 @@ public class ProfileActivity extends Activity{
 	Button btnIgnoreGrp;
 	
 	Button btnAcceptGrp;
-	
+	Button btnIgnoreEvent,btnAcceptEvent;
 	
 	String[] groupName;
+	String[] groupAdmin;
 	String[] groupMembers;
 	
+	String[] eventName;
+	String[] eventAdmin;
+	String[] eventDesc;
+	String[] eventGroupName;
+	String[] eventVenue;
+	String[] eventDate;
+	String[] eventTime;
 	
-	String[] groupAdmin;
+	ArrayAdapter<String> eventAdapter;
+	int eventGlobalPosition;
+	
 	ArrayAdapter<String> groupMembersAdapter;
 	ArrayAdapter<String> groupAdapter;
 	List<NameValuePair> params1;
@@ -118,6 +128,7 @@ public class ProfileActivity extends Activity{
 			fisrtName.setText(user.getString("firstName").toUpperCase());
 			//Log.e("UserDetails",(new Integer(user.getJSONArray("groupRequests").length())).toString());
 			getGroupRequests();
+			getEventRequests();
 			
 			//groupNotifications=(user.getJSONArray("groupRequests").toString());
 		} catch (JSONException e) {
@@ -129,6 +140,16 @@ public class ProfileActivity extends Activity{
             @Override
             public void onClick(View view) {
                 Intent regactivity = new Intent(ProfileActivity.this,GroupsActivity.class);
+                regactivity.putExtra("userdata", user.toString());
+                startActivity(regactivity);
+                //finish();
+            }
+        });
+		
+		events.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent regactivity = new Intent(ProfileActivity.this,EventsActivity.class);
                 regactivity.putExtra("userdata", user.toString());
                 startActivity(regactivity);
                 //finish();
@@ -178,6 +199,102 @@ public class ProfileActivity extends Activity{
 			e.printStackTrace();
 		}
 	}
+	
+	private void getEventPopupWindow() {
+		// TODO Auto-generated method stub
+		try {
+			
+			timerFlag=false;
+			LayoutInflater inflater = (LayoutInflater) ProfileActivity.this
+					.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+			View layout = inflater.inflate(
+					R.layout.activity_eventnotification,
+					(ViewGroup) findViewById(R.id.rel_popup_events));
+			// Log.e("grpmembers", layout.toString());
+			TextView eventsName=(TextView)layout.findViewById(R.id.tv_event_name);
+			eventsName.setText(eventName[eventGlobalPosition]);
+			
+			TextView tv_event_desc=(TextView)layout.findViewById(R.id.tv_event_desc);
+			tv_event_desc.setText(eventDesc[eventGlobalPosition]);
+			
+			TextView tv_grp_name=(TextView)layout.findViewById(R.id.tv_grp_name);
+			tv_grp_name.setText(eventGroupName[eventGlobalPosition]);
+			
+			TextView tv_event_venue=(TextView)layout.findViewById(R.id.tv_event_venue);
+			tv_event_venue.setText(eventVenue[eventGlobalPosition]);
+			
+			TextView tv_event_date=(TextView)layout.findViewById(R.id.tv_event_date);
+			tv_event_date.setText(eventDate[eventGlobalPosition]);
+			
+			TextView tv_event_time=(TextView)layout.findViewById(R.id.tv_event_time);
+			tv_event_time.setText(eventTime[eventGlobalPosition]);
+			
+			Display disp=getWindowManager().getDefaultDisplay();
+			int width=disp.getWidth();
+			int height=disp.getHeight();
+			//layout.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+			pwindow = new PopupWindow(layout, width-width/4,height-height/8, true);
+			pwindow.showAtLocation(layout, Gravity.CENTER, 0, 0);
+		
+			btnIgnoreEvent = (Button) layout
+					.findViewById(R.id.btnIgnoreEvent);
+			btnIgnoreEvent.setOnClickListener(btn_Ignore_Event);
+			
+			btnAcceptEvent = (Button) layout
+					.findViewById(R.id.btnAcceptEvent);
+			btnAcceptEvent.setOnClickListener(btn_Accept_Event);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private OnClickListener btn_Accept_Event = new OnClickListener() {
+
+		public void onClick(View view) {
+			// TODO Auto-generated method stub
+			try {
+				
+				ServerRequest sr = new ServerRequest();
+			 	params = new ArrayList<NameValuePair>();
+			 	params.add(new BasicNameValuePair("userEmail", user.getString("email")));
+			 	params.add(new BasicNameValuePair("userName", user.getString("userName")));
+	           params.add(new BasicNameValuePair("eventName", eventName[eventGlobalPosition]));
+	           params.add(new BasicNameValuePair("eventAdminEmail", eventAdmin[eventGlobalPosition]));
+	           params.add(new BasicNameValuePair("updateAction", "Join Event"));
+	           JSONObject json = sr.getJSON(AppSettings.SERVER_IP+"/updateGroup",params);
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			refreshNotificationList();
+			pwindow.dismiss();
+			timerFlag=true;
+		}
+	};
+	
+	private OnClickListener btn_Ignore_Event = new OnClickListener() {
+
+		public void onClick(View view) {
+			// TODO Auto-generated method stub
+			try {
+				
+				ServerRequest sr = new ServerRequest();
+			 	params = new ArrayList<NameValuePair>();
+			 	params.add(new BasicNameValuePair("userEmail", user.getString("email")));
+			 	params.add(new BasicNameValuePair("userName", user.getString("userName")));
+	           params.add(new BasicNameValuePair("eventName", eventName[eventGlobalPosition]));
+	           params.add(new BasicNameValuePair("eventAdminEmail", eventAdmin[eventGlobalPosition]));
+	           params.add(new BasicNameValuePair("updateAction", "Ignore Event"));
+	           JSONObject json = sr.getJSON(AppSettings.SERVER_IP+"/updateGroup",params);
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			refreshNotificationList();
+			pwindow.dismiss();
+			timerFlag=true;
+		}
+	};
 	
 	private OnClickListener btnAccept = new OnClickListener() {
 
@@ -243,6 +360,7 @@ public class ProfileActivity extends Activity{
 		         user=newjson.getJSONObject("user");
 		         
 		         getGroupRequests();
+		         getEventRequests();
 	           //groupAdapter.notifyDataSetChanged();
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
@@ -306,6 +424,58 @@ public class ProfileActivity extends Activity{
    		   groupMembers[j]=json.getJSONArray("groupMembersName").getString(j);
    	   }
       }
+	}
+	
+	private void getEventRequests() throws JSONException{
+		eventName= new String[user.getJSONArray("eventRequests").length()];
+		eventAdmin=new String[user.getJSONArray("eventRequests").length()];
+		 eventDesc=new String[user.getJSONArray("eventRequests").length()];;
+		eventGroupName=new String[user.getJSONArray("eventRequests").length()];;
+			eventVenue=new String[user.getJSONArray("eventRequests").length()];;
+		 eventDate=new String[user.getJSONArray("eventRequests").length()];;
+			eventTime=new String[user.getJSONArray("eventRequests").length()];;
+		//converJsonArrayToString(user.getJSONArray("groupRequests"),groupNotifications);
+		
+		
+		for(int i = 0; i < user.getJSONArray("eventRequests").length(); i++) {
+			ServerRequest sr = new ServerRequest();
+			 params = new ArrayList<NameValuePair>();
+             params.add(new BasicNameValuePair("eventToken", user.getJSONArray("eventRequests").getString(i)));
+            JSONObject json = sr.getJSON(AppSettings.SERVER_IP+"/getEventDetails",params);
+            if(json != null){
+           // try{
+            	//String jsonstr = json.getString("response");
+            	eventName[i]=json.getString("eventName");
+            	eventAdmin[i]=json.getString("eventAdmin");
+            	eventDesc[i]=json.getString("eventDescription");
+            	eventGroupName[i]=json.getString("groupName");
+            	eventVenue[i]=json.getString("venue");
+            	eventDate[i]=json.getString("eventDate");
+            	eventTime[i]=json.getString("eventTime");
+            	
+            //}catch (JSONException e) {
+              //  e.printStackTrace();
+            //}
+            }
+			
+		}
+		
+		eventAdapter= new ArrayAdapter<String>(this,
+				android.R.layout.simple_list_item_1, eventName);
+		//groupAdapter.
+		list_events.setAdapter(eventAdapter);
+		list_events.setOnItemClickListener(new OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view,
+					int position, long id) {
+				// TODO Auto-generated method stub
+				Log.e("eventlist", new Integer(position).toString());
+				eventGlobalPosition=position;
+				getEventPopupWindow();
+			}
+		});
+		//Log.e("UserDetails",groupNotifications[0]);
 	}
 	
 	@Override

@@ -63,14 +63,16 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Cancel" />
+                android:text="Cancel"
+                android:visibility="invisible" />
             
-           <!--   <Button
+             <Button
                 android:id="@+id/btnDeleteGrp"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Delete" /> -->
+                android:text="Delete" 
+                android:visibility="invisible"/>
                 
         </LinearLayout>
     </LinearLayout>

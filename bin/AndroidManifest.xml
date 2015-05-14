@@ -53,6 +53,23 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.vikram.groupay.GroupsActivity" />
         </activity>
+        <activity
+            android:name=".EventsActivity"
+            android:label="Events" 
+            android:screenOrientation="portrait" >
+        </activity>
+        
+        <activity
+            android:name=".CreateeventActivity"
+            android:label="Create Events" 
+            android:screenOrientation="portrait" >
+        </activity>
+        
+        <!-- <activity
+            android:name=".EventsActivity"
+            android:label="Events" 
+            android:screenOrientation="portrait" >
+        </activity> -->
     </application>
 
 </manifest>
