@@ -11,7 +11,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="300dp"
+        android:layout_height="350dp"
         android:orientation="vertical"
         android:padding="10dip" >
 
@@ -73,17 +73,14 @@
             android:id="@+id/tv_event_amt"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dip"
-            android:text="You owe $3"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="#372c24" />
+            />
 
         <Button
             android:id="@+id/btnEventSettle"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dip"
-            android:text="Settle Up" />
+            android:text="OK" />
         
     </LinearLayout>
 

@@ -23,6 +23,8 @@ import org.json.JSONObject;
 
 
 
+
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -100,7 +102,6 @@ public class ProfileActivity extends Activity{
 		list_events = (ListView) findViewById(R.id.list_events);
 		
 		pref = getSharedPreferences("AppPref", MODE_PRIVATE);
-		 
 		myTimer= new Timer();
         handler = new Handler(); 
         myTimerTask = new TimerTask() {
@@ -125,6 +126,83 @@ public class ProfileActivity extends Activity{
 		
 		try {
 			user=new JSONObject(getIntent().getStringExtra("userdata"));
+			
+			fisrtName.setText(user.getString("firstName").toUpperCase());
+			//Log.e("UserDetails",(new Integer(user.getJSONArray("groupRequests").length())).toString());
+			getGroupRequests();
+			getEventRequests();
+			
+			//groupNotifications=(user.getJSONArray("groupRequests").toString());
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		groups.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent regactivity = new Intent(ProfileActivity.this,GroupsActivity.class);
+                regactivity.putExtra("userdata", user.toString());
+                startActivity(regactivity);
+                myTimer.cancel();
+                //finish();
+            }
+        });
+		
+		events.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent regactivity = new Intent(ProfileActivity.this,EventsActivity.class);
+                regactivity.putExtra("userdata", user.toString());
+                startActivity(regactivity);
+                myTimer.cancel();
+                //finish();
+            }
+        });
+		
+		
+	}
+	
+	@Override
+	public void onResume() {
+		super.onResume();
+		Log.e("onProfileOnResume","Yes");
+		updateMainView();
+		
+		
+	}
+	
+	private void updateMainView(){
+		myTimer= new Timer();
+        handler = new Handler(); 
+        myTimerTask = new TimerTask() {
+            public void run() { 
+                handler.post(new Runnable() {
+                    public void run() {
+                    	if(timerFlag){
+                    		//Toast.makeText(ProfileActivity.this, "test", Toast.LENGTH_SHORT).show();
+                            refreshNotificationList();
+                    	}
+                        
+                    }
+
+                });
+
+
+            }
+        };
+        
+        myTimer.schedule(myTimerTask, 10000, 10000); 
+        
+		
+		try {
+			ServerRequest newsr = new ServerRequest();
+           	
+			 	params = new ArrayList<NameValuePair>();
+				params.add(new BasicNameValuePair("userEmail", user.getString("email")));
+		         JSONObject newjson = newsr.getJSON(AppSettings.SERVER_IP+"/refreshUser",params);
+		         user=newjson.getJSONObject("user");
+			
 			fisrtName.setText(user.getString("firstName").toUpperCase());
 			//Log.e("UserDetails",(new Integer(user.getJSONArray("groupRequests").length())).toString());
 			getGroupRequests();
@@ -155,9 +233,7 @@ public class ProfileActivity extends Activity{
                 //finish();
             }
         });
-		
 	}
-	
 	private void getPopupWindow() {
 		// TODO Auto-generated method stub
 		try {
@@ -261,7 +337,7 @@ public class ProfileActivity extends Activity{
 	           params.add(new BasicNameValuePair("eventName", eventName[eventGlobalPosition]));
 	           params.add(new BasicNameValuePair("eventAdminEmail", eventAdmin[eventGlobalPosition]));
 	           params.add(new BasicNameValuePair("updateAction", "Join Event"));
-	           JSONObject json = sr.getJSON(AppSettings.SERVER_IP+"/updateGroup",params);
+	           JSONObject json = sr.getJSON(AppSettings.SERVER_IP+"/updateEvent",params);
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -285,7 +361,7 @@ public class ProfileActivity extends Activity{
 	           params.add(new BasicNameValuePair("eventName", eventName[eventGlobalPosition]));
 	           params.add(new BasicNameValuePair("eventAdminEmail", eventAdmin[eventGlobalPosition]));
 	           params.add(new BasicNameValuePair("updateAction", "Ignore Event"));
-	           JSONObject json = sr.getJSON(AppSettings.SERVER_IP+"/updateGroup",params);
+	           JSONObject json = sr.getJSON(AppSettings.SERVER_IP+"/updateEvent",params);
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -446,7 +522,7 @@ public class ProfileActivity extends Activity{
            // try{
             	//String jsonstr = json.getString("response");
             	eventName[i]=json.getString("eventName");
-            	eventAdmin[i]=json.getString("eventAdmin");
+            	eventAdmin[i]=json.getString("eventAdminEmail");
             	eventDesc[i]=json.getString("eventDescription");
             	eventGroupName[i]=json.getString("groupName");
             	eventVenue[i]=json.getString("venue");
@@ -512,6 +588,7 @@ public class ProfileActivity extends Activity{
 		return super.onOptionsItemSelected(item);
 
 	}
+	
 
 }
 

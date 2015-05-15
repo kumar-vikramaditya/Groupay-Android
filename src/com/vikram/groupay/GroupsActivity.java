@@ -12,6 +12,7 @@ import org.json.JSONObject;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.util.Log;
@@ -49,15 +50,40 @@ public class GroupsActivity extends Activity{
 	PopupWindow pwindow;
 	Button btnDeleteGrp,btnLeaveGrp;
 	
+	LayoutInflater inflater;
+	View layout;
+	TextView grpName;
+	ListView grpmembers;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_groups);
 		
-		getActionBar().setDisplayHomeAsUpEnabled(true);
 		list_usergroups=(ListView) findViewById(R.id.list_usergroups);
 		try {
+			//if(user!=null)
 			user=new JSONObject(getIntent().getStringExtra("userdata"));
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		updateUserLists();
+		createGroup=(Button) findViewById(R.id.btnCreateGroup);
+		createGroup.setOnClickListener(new View.OnClickListener() {
+	            @Override
+	            public void onClick(View view) {
+	                Intent creategroupactivity = new Intent(GroupsActivity.this,CreategroupActivity.class);
+	                creategroupactivity.putExtra("userdata", user.toString());
+	                startActivity(creategroupactivity);
+	                //finish();
+	            }
+	        });
+	}
+	
+	private void updateUserLists(){
+		try {
+			
 			groupsAdded= new String[user.getJSONArray("groups").length()];
 			groupsAdmin=new String[user.getJSONArray("groups").length()];
 			groupsName= new String[user.getJSONArray("groups").length()];
@@ -95,35 +121,23 @@ public class GroupsActivity extends Activity{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		createGroup=(Button) findViewById(R.id.btnCreateGroup);
-		createGroup.setOnClickListener(new View.OnClickListener() {
-	            @Override
-	            public void onClick(View view) {
-	                Intent creategroupactivity = new Intent(GroupsActivity.this,CreategroupActivity.class);
-	                creategroupactivity.putExtra("userdata", user.toString());
-	                startActivity(creategroupactivity);
-	                //finish();
-	            }
-	        });
 	}
-	
-	
 	private void getPopupWindow() {
 		// TODO Auto-generated method stub
 		try {
 			
-			LayoutInflater inflater = (LayoutInflater) GroupsActivity.this
+			inflater = (LayoutInflater) GroupsActivity.this
 					.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-			View layout = inflater.inflate(
+			layout = inflater.inflate(
 					R.layout.activity_groupleave,
 					(ViewGroup) findViewById(R.id.rel_grpleave));
 			// Log.e("grpmembers", layout.toString());
-			TextView grpName=(TextView)layout.findViewById(R.id.disp_grpname);
+			grpName =(TextView)layout.findViewById(R.id.disp_grpname);
 			btnDeleteGrp=(Button)layout.findViewById(R.id.btnDeleteGrp);
 			btnLeaveGrp=(Button)layout.findViewById(R.id.btnLeaveGrp);
 			grpName.setText(groupsAdded[globalPosition]);
 			
-			ListView grpmembers = (ListView) layout
+			grpmembers = (ListView) layout
 					.findViewById(R.id.list_members);
 			
 			//getGroupMembers();
@@ -174,6 +188,31 @@ public class GroupsActivity extends Activity{
 		}
 	}
 	
+	/*private void refreshLists() throws JSONException{
+		
+	
+			ServerRequest sr = new ServerRequest();
+			 params = new ArrayList<NameValuePair>();
+             params.add(new BasicNameValuePair("groupToken", user.getJSONArray("groups").getString(globalPosition)));
+            JSONObject json = sr.getJSON(AppSettings.SERVER_IP+"/getGroupDetails",params);
+            if(json != null){
+            	//groupsAdded[i]=json.getString("groupName")+"  ("+ json.getString("groupAdminName")+")";
+            	//groupsAdmin[i]=json.getString("groupAdmin");
+            	groupAdminName=json.getString("groupAdminName");
+            	groupAdminEmail=json.getString("groupAdmin");
+            	groupMembers= new String[json.getJSONArray("groupMembersName").length()];
+            	   for(int j=0;j<json.getJSONArray("groupMembersName").length();j++){
+            		   groupMembers[j]=json.getJSONArray("groupMembersName").getString(j);
+            	   }
+            }
+			
+       groupMembersAdapter = new ArrayAdapter<String>(
+				GroupsActivity.this,
+				android.R.layout.simple_list_item_1, groupMembers);
+		// Log.e(tag, msg);
+		grpmembers.setAdapter(groupMembersAdapter);
+	}*/
+	
 	private OnClickListener deleteGroup = new OnClickListener() {
 
 		public void onClick(View view) {
@@ -188,11 +227,27 @@ public class GroupsActivity extends Activity{
 	           params.add(new BasicNameValuePair("groupAdminEmail", groupAdminEmail));
 	           params.add(new BasicNameValuePair("updateAction", "Delete Group"));
 	           JSONObject json = sr.getJSON(AppSettings.SERVER_IP+"/updateGroup",params);
+	           
+	           	ServerRequest newsr = new ServerRequest();
+	           	
+   			 	params = new ArrayList<NameValuePair>();
+   				params.add(new BasicNameValuePair("userEmail", user.getString("email")));
+   		         JSONObject newjson = newsr.getJSON(AppSettings.SERVER_IP+"/refreshUser",params);
+   		         user=newjson.getJSONObject("user");
+	   		      //refreshLists();
+   		      updateUserLists();
+	   		       
+	   			
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			//refreshNotificationList();
+			/*try {
+				refreshLists();
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}*/
 			pwindow.dismiss();
 		}
 	};
@@ -211,43 +266,80 @@ public class GroupsActivity extends Activity{
 	           params.add(new BasicNameValuePair("groupAdminEmail", groupAdminEmail));
 	           params.add(new BasicNameValuePair("updateAction", "Leave Group"));
 	           JSONObject json = sr.getJSON(AppSettings.SERVER_IP+"/updateGroup",params);
+	           
+	           ServerRequest newsr = new ServerRequest();
+	           	
+  			 	params = new ArrayList<NameValuePair>();
+  				params.add(new BasicNameValuePair("userEmail", user.getString("email")));
+  		         JSONObject newjson = newsr.getJSON(AppSettings.SERVER_IP+"/refreshUser",params);
+  		         user=newjson.getJSONObject("user");
+	   		      //refreshLists();
+  		       updateUserLists();
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			//refreshNotificationList();
+			
 			pwindow.dismiss();
 		}
 	};
-	
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		MenuInflater inflater = getMenuInflater();
-		inflater.inflate(R.menu.main, menu);
-		return super.onCreateOptionsMenu(menu);
-	}
+	 
+	 @Override
+		public void onResume() {
+		 super.onResume();
+			Log.e("OnResumeGroupsActivity","Yess1");
+		 try {
+				//if(user!=null)
+				//user=new JSONObject(getIntent().getStringExtra("userdata"));
+			 	ServerRequest newsr = new ServerRequest();
+	           	
+			 	params = new ArrayList<NameValuePair>();
+				params.add(new BasicNameValuePair("userEmail", user.getString("email")));
+		         JSONObject newjson = newsr.getJSON(AppSettings.SERVER_IP+"/refreshUser",params);
+		         user=newjson.getJSONObject("user");
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			updateUserLists();
+			
+		}
+	 
+	 
+	 @Override
+		public boolean onCreateOptionsMenu(Menu menu) {
+			// Inflate the menu; this adds items to the action bar if it is present.
+			//Log.e("GroupayMenu", "error");
+			MenuInflater inflater = getMenuInflater();
+			inflater.inflate(R.menu.activity_main_actions, menu);
+			return super.onCreateOptionsMenu(menu);
+			// getMenuInflater().inflate(R.menu.main, menu);
+			// return true;
+		}
 
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		// Handle action bar item clicks here. The action bar will
-		// automatically handle clicks on the Home/Up button, so long
-		// as you specify a parent activity in AndroidManifest.xml.
-		switch (item.getItemId()) {
+		@Override
+		public boolean onOptionsItemSelected(MenuItem item) {
+			// Handle action bar item clicks here. The action bar will
+			// automatically handle clicks on the Home/Up button, so long
+			// as you specify a parent activity in AndroidManifest.xml.
+		
+			switch (item.getItemId()) {
 
-		case android.R.id.home:
-			//Log.e("GroupActivity", "YESS");
-			NavUtils.navigateUpFromSameTask(GroupsActivity.this);
-			return true;
+			case R.id.action_logout:
+				//SharedPreferences.Editor edit = pref.edit();
+	            //Storing Data using SharedPreferences
+	            //edit.putString("token", "");
+	            //edit.commit();
+	            Intent mainactivity = new Intent(GroupsActivity.this,MainActivity.class);
+
+	            startActivity(mainactivity);
+	            finish();
+				return true;
+
+			}
+			return super.onOptionsItemSelected(item);
 
 		}
-		return super.onOptionsItemSelected(item);
-
-	}
-
-	 @Override
-	   public void onBackPressed() {
-	      moveTaskToBack(true); 
-	      GroupsActivity.this.finish();
-	   }
+	 
+	 
 }
