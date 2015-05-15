@@ -288,22 +288,22 @@ public class ProfileActivity extends Activity{
 					(ViewGroup) findViewById(R.id.rel_popup_events));
 			// Log.e("grpmembers", layout.toString());
 			TextView eventsName=(TextView)layout.findViewById(R.id.tv_event_name);
-			eventsName.setText(eventName[eventGlobalPosition]);
+			eventsName.setText("Event Name: "+eventName[eventGlobalPosition]);
 			
 			TextView tv_event_desc=(TextView)layout.findViewById(R.id.tv_event_desc);
-			tv_event_desc.setText(eventDesc[eventGlobalPosition]);
+			tv_event_desc.setText("Event Desc: "+eventDesc[eventGlobalPosition]);
 			
 			TextView tv_grp_name=(TextView)layout.findViewById(R.id.tv_grp_name);
-			tv_grp_name.setText(eventGroupName[eventGlobalPosition]);
+			tv_grp_name.setText("Group Name: "+eventGroupName[eventGlobalPosition]);
 			
 			TextView tv_event_venue=(TextView)layout.findViewById(R.id.tv_event_venue);
-			tv_event_venue.setText(eventVenue[eventGlobalPosition]);
+			tv_event_venue.setText("Event Venue: "+eventVenue[eventGlobalPosition]);
 			
 			TextView tv_event_date=(TextView)layout.findViewById(R.id.tv_event_date);
-			tv_event_date.setText(eventDate[eventGlobalPosition]);
+			tv_event_date.setText("Event Date: "+eventDate[eventGlobalPosition]);
 			
 			TextView tv_event_time=(TextView)layout.findViewById(R.id.tv_event_time);
-			tv_event_time.setText(eventTime[eventGlobalPosition]);
+			tv_event_time.setText("Event Time: "+eventTime[eventGlobalPosition]);
 			
 			Display disp=getWindowManager().getDefaultDisplay();
 			int width=disp.getWidth();
