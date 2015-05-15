@@ -1,5 +1,5 @@
 package com.vikram.groupay;
 
 public class AppSettings {
-	public static final String SERVER_IP="http://10.189.24.189:8080";
+	public static final String SERVER_IP="http://ec2-54-153-80-151.us-west-1.compute.amazonaws.com:8080";
 }
